@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Character Studio</title>
+    <title>Mixamo Pro - 3D Character Animation Studio</title>
     <style>
         * {
             margin: 0;
@@ -12,95 +12,148 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
             overflow: hidden;
-            height: 100vh;
         }
 
+        /* Header */
         .header {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 0 20px;
+            height: 60px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            justify-content: space-between;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
         }
 
-        .nav {
+        .header-actions {
             display: flex;
-            gap: 30px;
+            gap: 15px;
         }
 
-        .nav a {
+        .btn {
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
             color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s;
         }
 
-        .nav a:hover {
-            color: #667eea;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
         }
 
-        .container {
+        .btn-secondary {
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #3a3a3a;
+        }
+
+        /* Main Layout */
+        .main-layout {
             display: flex;
-            height: calc(100vh - 80px);
+            height: calc(100vh - 60px);
         }
 
-        .sidebar {
-            width: 300px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
+        /* Left Sidebar - Characters */
+        .left-sidebar {
+            width: 280px;
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
             overflow-y: auto;
-            backdrop-filter: blur(10px);
-        }
-
-        .sidebar h2 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-
-        .animation-list {
             display: flex;
             flex-direction: column;
+        }
+
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
-        .anim-btn {
-            background: rgba(102, 126, 234, 0.3);
-            border: 2px solid #667eea;
-            color: #fff;
-            padding: 15px;
+        .character-card {
+            background: #0f0f0f;
+            border: 2px solid #2a2a2a;
             border-radius: 8px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 14px;
-            text-align: left;
+            text-align: center;
         }
 
-        .anim-btn:hover {
-            background: rgba(102, 126, 234, 0.6);
-            transform: translateX(5px);
+        .character-card:hover, .character-card.active {
+            border-color: #ff6b35;
+            background: #1f1f1f;
         }
 
-        .anim-btn.active {
-            background: #667eea;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+        .character-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
         }
 
-        .viewer {
+        .character-name {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        /* Center Viewport */
+        .viewport {
             flex: 1;
             position: relative;
+            background: #0f0f0f;
         }
 
         #canvas-container {
@@ -108,73 +161,285 @@
             height: 100%;
         }
 
-        .controls {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px 40px;
-            border-radius: 50px;
-            display: flex;
-            gap: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .control-btn {
-            background: #667eea;
-            border: none;
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-btn:hover {
-            background: #764ba2;
-            transform: scale(1.1);
-        }
-
-        .info-panel {
+        .viewport-controls {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .view-btn {
+            width: 45px;
+            height: 45px;
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
             color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover {
+            background: #2a2a2a;
+            border-color: #ff6b35;
+        }
+
+        .timeline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            border-top: 1px solid #2a2a2a;
+            padding: 15px 20px;
             backdrop-filter: blur(10px);
         }
 
-        .color-picker {
-            margin-top: 20px;
-        }
-
-        .color-picker label {
-            color: #fff;
-            display: block;
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
             margin-bottom: 10px;
         }
 
-        .color-btn {
+        .play-btn {
             width: 40px;
             height: 40px;
+            background: #ff6b35;
+            border: none;
             border-radius: 50%;
-            border: 3px solid #fff;
+            color: #fff;
             cursor: pointer;
-            display: inline-block;
-            margin-right: 10px;
-            transition: transform 0.3s;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
         }
 
-        .color-btn:hover {
-            transform: scale(1.2);
+        .play-btn:hover {
+            background: #f7931e;
+            transform: scale(1.1);
+        }
+
+        .timeline-slider {
+            flex: 1;
+            height: 6px;
+            background: #2a2a2a;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .timeline-progress {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            font-size: 12px;
+            color: #888;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* Right Sidebar - Animations & Settings */
+        .right-sidebar {
+            width: 320px;
+            background: #1a1a1a;
+            border-left: 1px solid #2a2a2a;
+            overflow-y: auto;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #888;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            color: #fff;
+        }
+
+        .tab.active {
+            color: #ff6b35;
+            border-bottom-color: #ff6b35;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .animation-item {
+            background: #0f0f0f;
+            border: 2px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .animation-item:hover, .animation-item.active {
+            border-color: #ff6b35;
+            background: #1f1f1f;
+        }
+
+        .animation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .animation-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .animation-badge {
+            padding: 3px 8px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .animation-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .animation-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            background: #2a2a2a;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #ff6b35;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .color-swatch {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            border: 2px solid #2a2a2a;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .color-swatch:hover, .color-swatch.active {
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .export-btn {
+            padding: 12px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: #3a3a3a;
+            border-color: #ff6b35;
+        }
+
+        .format-badge {
+            padding: 4px 10px;
+            background: #ff6b35;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
         ::-webkit-scrollbar {
@@ -182,62 +447,353 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
+            background: #0f0f0f;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #667eea;
+            background: #2a2a2a;
             border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3a;
+        }
+
+        .stats-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(26, 26, 26, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #888;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            gap: 20px;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
-        <div class="logo">3D Studio</div>
-        <div class="nav">
-            <a href="#characters">Персонажи</a>
-            <a href="#animations">Анимации</a>
-            <a href="#export">Экспорт</a>
+        <div class="logo">MIXAMO PRO</div>
+        <div class="header-actions">
+            <button class="btn btn-secondary">📁 Мои проекты</button>
+            <button class="btn btn-primary" onclick="downloadModel()">⬇ Скачать модель</button>
         </div>
     </div>
 
-    <div class="container">
-        <div class="sidebar">
-            <h2>🎬 Анимации</h2>
-            <div class="animation-list">
-                <button class="anim-btn active" data-anim="idle">🧍 Idle - Стоять</button>
-                <button class="anim-btn" data-anim="walk">🚶 Walk - Ходьба</button>
-                <button class="anim-btn" data-anim="run">🏃 Run - Бег</button>
-                <button class="anim-btn" data-anim="jump">🦘 Jump - Прыжок</button>
-                <button class="anim-btn" data-anim="dance">💃 Dance - Танец</button>
-                <button class="anim-btn" data-anim="wave">👋 Wave - Махать</button>
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Sidebar - Characters -->
+        <div class="left-sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Персонажи</div>
+                <input type="text" class="search-box" placeholder="🔍 Поиск персонажей..." id="character-search">
+                <div class="character-grid">
+                    <div class="character-card active" data-char="human">
+                        <div class="character-icon">🧑</div>
+                        <div class="character-name">Человек</div>
+                    </div>
+                    <div class="character-card" data-char="robot">
+                        <div class="character-icon">🤖</div>
+                        <div class="character-name">Робот</div>
+                    </div>
+                    <div class="character-card" data-char="warrior">
+                        <div class="character-icon">⚔️</div>
+                        <div class="character-name">Воин</div>
+                    </div>
+                    <div class="character-card" data-char="ninja">
+                        <div class="character-icon">🥷</div>
+                        <div class="character-name">Ниндзя</div>
+                    </div>
+                    <div class="character-card" data-char="zombie">
+                        <div class="character-icon">🧟</div>
+                        <div class="character-name">Зомби</div>
+                    </div>
+                    <div class="character-card" data-char="alien">
+                        <div class="character-icon">👽</div>
+                        <div class="character-name">Пришелец</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="color-picker">
-                <label>🎨 Цвет персонажа:</label>
-                <span class="color-btn" style="background: #ff6b6b;" data-color="#ff6b6b"></span>
-                <span class="color-btn" style="background: #4ecdc4;" data-color="#4ecdc4"></span>
-                <span class="color-btn" style="background: #ffe66d;" data-color="#ffe66d"></span>
-                <span class="color-btn" style="background: #a8e6cf;" data-color="#a8e6cf"></span>
-                <span class="color-btn" style="background: #c7ceea;" data-color="#c7ceea"></span>
+            <div class="sidebar-section">
+                <div class="sidebar-title">Загрузить модель</div>
+                <button class="btn btn-secondary" style="width: 100%;" onclick="document.getElementById('file-input').click()">
+                    📤 Загрузить FBX/OBJ
+                </button>
+                <input type="file" id="file-input" accept=".fbx,.obj,.glb,.gltf" style="display: none;">
             </div>
         </div>
 
-        <div class="viewer">
+        <!-- Center Viewport -->
+        <div class="viewport">
             <div id="canvas-container"></div>
             
-            <div class="info-panel">
-                <div><strong>Текущая анимация:</strong></div>
-                <div id="current-anim">Idle</div>
-                <div style="margin-top: 15px;"><strong>Управление:</strong></div>
-                <div style="font-size: 12px; margin-top: 5px;">🖱️ Мышь - вращать камеру</div>
-                <div style="font-size: 12px;">🔍 Колесико - приближать</div>
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <div class="stat-row">
+                    <span class="stat-label">Полигоны:</span>
+                    <span class="stat-value" id="poly-count">2,543</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Вершины:</span>
+                    <span class="stat-value" id="vertex-count">1,876</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">FPS:</span>
+                    <span class="stat-value" id="fps">60</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Кости:</span>
+                    <span class="stat-value" id="bone-count">24</span>
+                </div>
             </div>
 
-            <div class="controls">
-                <button class="control-btn" id="play-pause">▶</button>
-                <button class="control-btn" id="reset">↻</button>
-                <button class="control-btn" id="fullscreen">⛶</button>
+            <!-- Viewport Controls -->
+            <div class="viewport-controls">
+                <button class="view-btn" title="Сетка" onclick="toggleGrid()">⊞</button>
+                <button class="view-btn" title="Скелет" onclick="toggleSkeleton()">🦴</button>
+                <button class="view-btn" title="Освещение" onclick="toggleLighting()">💡</button>
+                <button class="view-btn" title="Полный экран" onclick="toggleFullscreen()">⛶</button>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline">
+                <div class="timeline-controls">
+                    <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+                    <button class="view-btn" style="width: 35px; height: 35px; font-size: 14px;" onclick="resetTimeline()">↺</button>
+                    <div class="timeline-slider" id="timeline-slider">
+                        <div class="timeline-progress" id="timeline-progress"></div>
+                    </div>
+                    <div class="time-display" id="time-display">0.00 / 3.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Animations & Settings -->
+        <div class="right-sidebar">
+            <div class="tabs">
+                <div class="tab active" data-tab="animations">Анимации</div>
+                <div class="tab" data-tab="settings">Настройки</div>
+                <div class="tab" data-tab="export">Экспорт</div>
+            </div>
+
+            <!-- Animations Tab -->
+            <div class="tab-content active" id="animations-tab">
+                <div class="animation-category">
+                    <div class="category-title">🚶 Движение</div>
+                    <div class="animation-item active" data-anim="idle">
+                        <div class="animation-header">
+                            <div class="animation-title">Idle</div>
+                            <div class="animation-badge">3.0s</div>
+                        </div>
+                        <div class="animation-meta">Базовая стойка</div>
+                    </div>
+                    <div class="animation-item" data-anim="walk">
+                        <div class="animation-header">
+                            <div class="animation-title">Walking</div>
+                            <div class="animation-badge">2.5s</div>
+                        </div>
+                        <div class="animation-meta">Медленная ходьба</div>
+                    </div>
+                    <div class="animation-item" data-anim="run">
+                        <div class="animation-header">
+                            <div class="animation-title">Running</div>
+                            <div class="animation-badge">1.8s</div>
+                        </div>
+                        <div class="animation-meta">Быстрый бег</div>
+                    </div>
+                    <div class="animation-item" data-anim="sprint">
+                        <div class="animation-header">
+                            <div class="animation-title">Sprint</div>
+                            <div class="animation-badge">1.5s</div>
+                        </div>
+                        <div class="animation-meta">Максимальная скорость</div>
+                    </div>
+                </div>
+
+                <div class="animation-category">
+                    <div class="category-title">🤸 Акробатика</div>
+                    <div class="animation-item" data-anim="jump">
+                        <div class="animation-header">
+                            <div class="animation-title">Jump</div>
+                            <div class="animation-badge">1.2s</div>
+                        </div>
+                        <div class="animation-meta">Прыжок вверх</div>
+                    </div>
+                    <div class="animation-item" data-anim="flip">
+                        <div class="animation-header">
+                            <div class="animation-title">Backflip</div>
+                            <div class="animation-badge">2.0s</div>
+                        </div>
+                        <div class="animation-meta">Сальто назад</div>
+                    </div>
+                    <div class="animation-item" data-anim="roll">
+                        <div class="animation-header">
+                            <div class="animation-title">Roll</div>
+                            <div class="animation-badge">1.5s</div>
+                        </div>
+                        <div class="animation-meta">Кувырок вперёд</div>
+                    </div>
+                </div>
+
+                <div class="animation-category">
+                    <div class="category-title">💃 Эмоции и жесты</div>
+                    <div class="animation-item" data-anim="dance">
+                        <div class="animation-header">
+                            <div class="animation-title">Dance</div>
+                            <div class="animation-badge">4.0s</div>
+                        </div>
+                        <div class="animation-meta">Танцевальные движения</div>
+                    </div>
+                    <div class="animation-item" data-anim="wave">
+                        <div class="animation-header">
+                            <div class="animation-title">Wave</div>
+                            <div class="animation-badge">2.0s</div>
+                        </div>
+                        <div class="animation-meta">Приветствие рукой</div>
+                    </div>
+                    <div class="animation-item" data-anim="clap">
+                        <div class="animation-header">
+                            <div class="animation-title">Clapping</div>
+                            <div class="animation-badge">2.5s</div>
+                        </div>
+                        <div class="animation-meta">Аплодисменты</div>
+                    </div>
+                </div>
+
+                <div class="animation-category">
+                    <div class="category-title">⚔️ Боевые</div>
+                    <div class="animation-item" data-anim="punch">
+                        <div class="animation-header">
+                            <div class="animation-title">Punch Combo</div>
+                            <div class="animation-badge">1.8s</div>
+                        </div>
+                        <div class="animation-meta">Серия ударов</div>
+                    </div>
+                    <div class="animation-item" data-anim="kick">
+                        <div class="animation-header">
+                            <div class="animation-title">High Kick</div>
+                            <div class="animation-badge">1.5s</div>
+                        </div>
+                        <div class="animation-meta">Высокий удар ногой</div>
+                    </div>
+                    <div class="animation-item" data-anim="block">
+                        <div class="animation-header">
+                            <div class="animation-title">Defense Stance</div>
+                            <div class="animation-badge">2.0s</div>
+                        </div>
+                        <div class="animation-meta">Защитная позиция</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings-tab">
+                <div class="setting-group">
+                    <label class="setting-label">Скорость анимации</label>
+                    <div class="slider-container">
+                        <input type="range" class="slider" min="0.1" max="3" step="0.1" value="1" id="speed-slider">
+                        <span class="slider-value" id="speed-value">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Яркость освещения</label>
+                    <div class="slider-container">
+                        <input type="range" class="slider" min="0" max="2" step="0.1" value="1" id="brightness-slider">
+                        <span class="slider-value" id="brightness-value">100%</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Масштаб модели</label>
+                    <div class="slider-container">
+                        <input type="range" class="slider" min="0.5" max="2" step="0.1" value="1" id="scale-slider">
+                        <span class="slider-value" id="scale-value">100%</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Цвет персонажа</label>
+                    <div class="color-palette">
+                        <div class="color-swatch active" style="background: #ff6b6b;" data-color="#ff6b6b"></div>
+                        <div class="color-swatch" style="background: #4ecdc4;" data-color="#4ecdc4"></div>
+                        <div class="color-swatch" style="background: #45b7d1;" data-color="#45b7d1"></div>
+                        <div class="color-swatch" style="background: #f9ca24;" data-color="#f9ca24"></div>
+                        <div class="color-swatch" style="background: #6c5ce7;" data-color="#6c5ce7"></div>
+                        <div class="color-swatch" style="background: #a29bfe;" data-color="#a29bfe"></div>
+                        <div class="color-swatch" style="background: #fd79a8;" data-color="#fd79a8"></div>
+                        <div class="color-swatch" style="background: #fdcb6e;" data-color="#fdcb6e"></div>
+                        <div class="color-swatch" style="background: #00b894;" data-color="#00b894"></div>
+                        <div class="color-swatch" style="background: #e17055;" data-color="#e17055"></div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Цвет фона</label>
+                    <div class="color-palette">
+                        <div class="color-swatch active" style="background: #0f0f0f;" data-bg="#0f0f0f"></div>
+                        <div class="color-swatch" style="background: #1a1a2e;" data-bg="#1a1a2e"></div>
+                        <div class="color-swatch" style="background: #16213e;" data-bg="#16213e"></div>
+                        <div class="color-swatch" style="background: #2d3436;" data-bg="#2d3436"></div>
+                        <div class="color-swatch" style="background: #ffffff;" data-bg="#ffffff"></div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Дополнительно</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="export-textures" checked>
+                        <label for="export-textures">Включить текстуры</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="export-morph">
+                        <label for="export-morph">Морф таргеты</label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Разрешение текстур</label>
+                    <div class="slider-container">
+                        <input type="range" class="slider" min="512" max="4096" step="512" value="2048" id="texture-res">
+                        <span class="slider-value" id="texture-res-value">2048px</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="downloadModel()">
+                    ⬇ Скачать модель с анимацией
+                </button>
             </div>
         </div>
     </div>
@@ -248,42 +804,61 @@
         let currentAnimation = 'idle';
         let isPlaying = true;
         let animations = {};
+        let animationSpeed = 1.0;
+        let currentTime = 0;
+        let animationDuration = 3.0;
+        let gridHelper, skeletonHelper;
+        let showGrid = true;
+        let showSkeleton = false;
+        let autoRotate = false;
 
+        // Initialize
         function init() {
             const container = document.getElementById('canvas-container');
             
-            // Scene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x1a1a2e);
-            scene.fog = new THREE.Fog(0x1a1a2e, 10, 50);
+            scene.background = new THREE.Color(0x0f0f0f);
+            scene.fog = new THREE.Fog(0x0f0f0f, 20, 50);
 
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 2, 5);
+            camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 1.5, 5);
+            camera.lookAt(0, 1, 0);
 
-            // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
 
             // Lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
 
             const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
             directionalLight.position.set(5, 10, 5);
             directionalLight.castShadow = true;
+            directionalLight.shadow.camera.near = 0.1;
+            directionalLight.shadow.camera.far = 50;
+            directionalLight.shadow.camera.left = -10;
+            directionalLight.shadow.camera.right = 10;
+            directionalLight.shadow.camera.top = 10;
+            directionalLight.shadow.camera.bottom = -10;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
             scene.add(directionalLight);
 
-            const spotLight = new THREE.SpotLight(0x667eea, 1);
-            spotLight.position.set(-5, 10, -5);
-            scene.add(spotLight);
+            const spotLight1 = new THREE.SpotLight(0xff6b35, 0.5);
+            spotLight1.position.set(-5, 8, -3);
+            scene.add(spotLight1);
+
+            const spotLight2 = new THREE.SpotLight(0x4ecdc4, 0.3);
+            spotLight2.position.set(5, 6, 3);
+            scene.add(spotLight2);
 
             // Ground
-            const groundGeometry = new THREE.CircleGeometry(15, 32);
+            const groundGeometry = new THREE.PlaneGeometry(50, 50);
             const groundMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x2d3561,
+                color: 0x1a1a1a,
                 roughness: 0.8,
                 metalness: 0.2
             });
@@ -293,30 +868,32 @@
             scene.add(ground);
 
             // Grid
-            const gridHelper = new THREE.GridHelper(20, 20, 0x667eea, 0x444466);
+            gridHelper = new THREE.GridHelper(50, 50, 0x2a2a2a, 0x1a1a1a);
             gridHelper.position.y = 0.01;
             scene.add(gridHelper);
 
-            // Create character
+            // Character
             createCharacter();
 
-            // Clock for animations
             clock = new THREE.Clock();
 
             // Mouse controls
             let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
+            let previousMouse = { x: 0, y: 0 };
 
             container.addEventListener('mousedown', (e) => {
                 isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
+                previousMouse = { x: e.clientX, y: e.clientY };
             });
 
             container.addEventListener('mousemove', (e) => {
                 if (isDragging && character) {
-                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaX = e.clientX - previousMouse.x;
+                    const deltaY = e.clientY - previousMouse.y;
+                    
                     character.rotation.y += deltaX * 0.01;
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                    
+                    previousMouse = { x: e.clientX, y: e.clientY };
                 }
             });
 
@@ -327,7 +904,7 @@
             container.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 camera.position.z += e.deltaY * 0.01;
-                camera.position.z = Math.max(2, Math.min(10, camera.position.z));
+                camera.position.z = Math.max(2, Math.min(15, camera.position.z));
             });
 
             window.addEventListener('resize', onWindowResize);
@@ -339,53 +916,140 @@
             const group = new THREE.Group();
 
             // Body
-            const bodyGeometry = new THREE.CylinderGeometry(0.4, 0.35, 1.2, 8);
-            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
+            const bodyGeometry = new THREE.CylinderGeometry(0.35, 0.4, 1, 16);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xff6b6b,
+                roughness: 0.7,
+                metalness: 0.3
+            });
             const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
             body.position.y = 1.2;
             body.castShadow = true;
             group.add(body);
 
             // Head
-            const headGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-            const headMaterial = new THREE.MeshStandardMaterial({ color: 0xffcccb });
+            const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
+            const headMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xffcccb,
+                roughness: 0.6,
+                metalness: 0.1
+            });
             const head = new THREE.Mesh(headGeometry, headMaterial);
-            head.position.y = 2;
+            head.position.y = 1.85;
             head.castShadow = true;
             group.add(head);
 
-            // Arms
-            const armGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.8, 8);
-            const armMaterial = new THREE.MeshStandardMaterial({ color: 0xff6b6b });
-            
-            const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-            leftArm.position.set(-0.5, 1.2, 0);
-            leftArm.castShadow = true;
-            group.add(leftArm);
+            // Neck
+            const neckGeometry = new THREE.CylinderGeometry(0.12, 0.15, 0.15, 16);
+            const neckMaterial = new THREE.MeshStandardMaterial({ color: 0xffcccb });
+            const neck = new THREE.Mesh(neckGeometry, neckMaterial);
+            neck.position.y = 1.6;
+            neck.castShadow = true;
+            group.add(neck);
 
-            const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-            rightArm.position.set(0.5, 1.2, 0);
-            rightArm.castShadow = true;
-            group.add(rightArm);
+            // Arms
+            const upperArmGeometry = new THREE.CylinderGeometry(0.08, 0.1, 0.6, 12);
+            const armMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0xff6b6b,
+                roughness: 0.7,
+                metalness: 0.3
+            });
+            
+            const leftUpperArm = new THREE.Mesh(upperArmGeometry, armMaterial);
+            leftUpperArm.position.set(-0.5, 1.4, 0);
+            leftUpperArm.castShadow = true;
+            group.add(leftUpperArm);
+
+            const rightUpperArm = new THREE.Mesh(upperArmGeometry, armMaterial);
+            rightUpperArm.position.set(0.5, 1.4, 0);
+            rightUpperArm.castShadow = true;
+            group.add(rightUpperArm);
+
+            const forearmGeometry = new THREE.CylinderGeometry(0.07, 0.08, 0.5, 12);
+            
+            const leftForearm = new THREE.Mesh(forearmGeometry, armMaterial);
+            leftForearm.position.set(-0.5, 0.85, 0);
+            leftForearm.castShadow = true;
+            group.add(leftForearm);
+
+            const rightForearm = new THREE.Mesh(forearmGeometry, armMaterial);
+            rightForearm.position.set(0.5, 0.85, 0);
+            rightForearm.castShadow = true;
+            group.add(rightForearm);
+
+            // Hands
+            const handGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+            const handMaterial = new THREE.MeshStandardMaterial({ color: 0xffcccb });
+            
+            const leftHand = new THREE.Mesh(handGeometry, handMaterial);
+            leftHand.position.set(-0.5, 0.55, 0);
+            leftHand.castShadow = true;
+            group.add(leftHand);
+
+            const rightHand = new THREE.Mesh(handGeometry, handMaterial);
+            rightHand.position.set(0.5, 0.55, 0);
+            rightHand.castShadow = true;
+            group.add(rightHand);
 
             // Legs
-            const legGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.9, 8);
-            const legMaterial = new THREE.MeshStandardMaterial({ color: 0x4a4a6a });
+            const thighGeometry = new THREE.CylinderGeometry(0.12, 0.14, 0.7, 12);
+            const legMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x2a4a6a,
+                roughness: 0.8,
+                metalness: 0.2
+            });
             
-            const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-            leftLeg.position.set(-0.2, 0.45, 0);
-            leftLeg.castShadow = true;
-            group.add(leftLeg);
+            const leftThigh = new THREE.Mesh(thighGeometry, legMaterial);
+            leftThigh.position.set(-0.18, 0.45, 0);
+            leftThigh.castShadow = true;
+            group.add(leftThigh);
 
-            const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-            rightLeg.position.set(0.2, 0.45, 0);
-            rightLeg.castShadow = true;
-            group.add(rightLeg);
+            const rightThigh = new THREE.Mesh(thighGeometry, legMaterial);
+            rightThigh.position.set(0.18, 0.45, 0);
+            rightThigh.castShadow = true;
+            group.add(rightThigh);
+
+            const shinGeometry = new THREE.CylinderGeometry(0.09, 0.11, 0.6, 12);
+            
+            const leftShin = new THREE.Mesh(shinGeometry, legMaterial);
+            leftShin.position.set(-0.18, 0.05, 0.05);
+            leftShin.castShadow = true;
+            group.add(leftShin);
+
+            const rightShin = new THREE.Mesh(shinGeometry, legMaterial);
+            rightShin.position.set(0.18, 0.05, 0.05);
+            rightShin.castShadow = true;
+            group.add(rightShin);
+
+            // Feet
+            const footGeometry = new THREE.BoxGeometry(0.12, 0.08, 0.25);
+            const footMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x1a2a3a,
+                roughness: 0.9
+            });
+            
+            const leftFoot = new THREE.Mesh(footGeometry, footMaterial);
+            leftFoot.position.set(-0.18, -0.2, 0.08);
+            leftFoot.castShadow = true;
+            group.add(leftFoot);
+
+            const rightFoot = new THREE.Mesh(footGeometry, footMaterial);
+            rightFoot.position.set(0.18, -0.2, 0.08);
+            rightFoot.castShadow = true;
+            group.add(rightFoot);
 
             character = group;
-            character.userData = { body, head, leftArm, rightArm, leftLeg, rightLeg };
+            character.userData = { 
+                body, head, neck,
+                leftUpperArm, rightUpperArm, 
+                leftForearm, rightForearm,
+                leftHand, rightHand,
+                leftThigh, rightThigh,
+                leftShin, rightShin,
+                leftFoot, rightFoot
+            };
+            
             scene.add(character);
-
             setupAnimations();
         }
 
@@ -393,52 +1057,209 @@
             animations = {
                 idle: () => {
                     const time = clock.getElapsedTime();
-                    if (character.userData.body) {
-                        character.userData.body.position.y = 1.2 + Math.sin(time * 2) * 0.02;
+                    const ud = character.userData;
+                    if (ud.body) {
+                        ud.body.position.y = 1.2 + Math.sin(time * 2) * 0.015;
+                        ud.head.position.y = 1.85 + Math.sin(time * 2) * 0.015;
+                        ud.leftUpperArm.rotation.x = Math.sin(time * 1.5) * 0.05;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 1.5 + Math.PI) * 0.05;
                     }
                 },
                 walk: () => {
-                    const time = clock.getElapsedTime();
-                    if (character.userData.leftLeg) {
-                        character.userData.leftLeg.rotation.x = Math.sin(time * 5) * 0.5;
-                        character.userData.rightLeg.rotation.x = Math.sin(time * 5 + Math.PI) * 0.5;
-                        character.userData.leftArm.rotation.x = Math.sin(time * 5 + Math.PI) * 0.3;
-                        character.userData.rightArm.rotation.x = Math.sin(time * 5) * 0.3;
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    if (ud.leftThigh) {
+                        // Legs
+                        ud.leftThigh.rotation.x = Math.sin(time * 4) * 0.6;
+                        ud.rightThigh.rotation.x = Math.sin(time * 4 + Math.PI) * 0.6;
+                        ud.leftShin.rotation.x = Math.max(0, Math.sin(time * 4) * 0.8);
+                        ud.rightShin.rotation.x = Math.max(0, Math.sin(time * 4 + Math.PI) * 0.8);
+                        
+                        // Arms
+                        ud.leftUpperArm.rotation.x = Math.sin(time * 4 + Math.PI) * 0.4;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 4) * 0.4;
+                        
+                        // Body bob
+                        ud.body.position.y = 1.2 + Math.abs(Math.sin(time * 4)) * 0.03;
                     }
                 },
                 run: () => {
-                    const time = clock.getElapsedTime();
-                    if (character.userData.leftLeg) {
-                        character.userData.leftLeg.rotation.x = Math.sin(time * 8) * 0.8;
-                        character.userData.rightLeg.rotation.x = Math.sin(time * 8 + Math.PI) * 0.8;
-                        character.userData.leftArm.rotation.x = Math.sin(time * 8 + Math.PI) * 0.6;
-                        character.userData.rightArm.rotation.x = Math.sin(time * 8) * 0.6;
-                        character.userData.body.position.y = 1.2 + Math.abs(Math.sin(time * 8)) * 0.1;
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    if (ud.leftThigh) {
+                        ud.leftThigh.rotation.x = Math.sin(time * 7) * 1;
+                        ud.rightThigh.rotation.x = Math.sin(time * 7 + Math.PI) * 1;
+                        ud.leftShin.rotation.x = Math.max(0, Math.sin(time * 7) * 1.2);
+                        ud.rightShin.rotation.x = Math.max(0, Math.sin(time * 7 + Math.PI) * 1.2);
+                        
+                        ud.leftUpperArm.rotation.x = Math.sin(time * 7 + Math.PI) * 0.8;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 7) * 0.8;
+                        
+                        ud.body.position.y = 1.2 + Math.abs(Math.sin(time * 7)) * 0.08;
+                        ud.body.rotation.z = Math.sin(time * 7) * 0.05;
+                    }
+                },
+                sprint: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    if (ud.leftThigh) {
+                        ud.leftThigh.rotation.x = Math.sin(time * 10) * 1.2;
+                        ud.rightThigh.rotation.x = Math.sin(time * 10 + Math.PI) * 1.2;
+                        ud.leftShin.rotation.x = Math.max(0, Math.sin(time * 10) * 1.5);
+                        ud.rightShin.rotation.x = Math.max(0, Math.sin(time * 10 + Math.PI) * 1.5);
+                        
+                        ud.leftUpperArm.rotation.x = Math.sin(time * 10 + Math.PI) * 1;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 10) * 1;
+                        
+                        ud.body.position.y = 1.2 + Math.abs(Math.sin(time * 10)) * 0.12;
+                        ud.body.rotation.x = -0.1;
+                        ud.body.rotation.z = Math.sin(time * 10) * 0.08;
                     }
                 },
                 jump: () => {
-                    const time = clock.getElapsedTime();
-                    const jumpHeight = Math.abs(Math.sin(time * 3)) * 1.5;
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const jumpCycle = (time % 1.2);
+                    let jumpHeight = 0;
+                    
+                    if (jumpCycle < 0.3) {
+                        jumpHeight = Math.sin((jumpCycle / 0.3) * Math.PI) * 1.8;
+                    }
+                    
                     character.position.y = jumpHeight;
-                    if (character.userData.leftArm) {
-                        character.userData.leftArm.rotation.x = -0.5;
-                        character.userData.rightArm.rotation.x = -0.5;
+                    const ud = character.userData;
+                    
+                    if (ud.leftUpperArm && jumpCycle < 0.3) {
+                        ud.leftUpperArm.rotation.x = -0.8;
+                        ud.rightUpperArm.rotation.x = -0.8;
+                        ud.leftThigh.rotation.x = 0.3;
+                        ud.rightThigh.rotation.x = 0.3;
+                    } else if (ud.leftUpperArm) {
+                        ud.leftUpperArm.rotation.x = 0;
+                        ud.rightUpperArm.rotation.x = 0;
+                        ud.leftThigh.rotation.x = 0;
+                        ud.rightThigh.rotation.x = 0;
+                    }
+                },
+                flip: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const flipCycle = (time % 2);
+                    
+                    if (flipCycle < 0.8) {
+                        const progress = flipCycle / 0.8;
+                        character.rotation.x = progress * Math.PI * 2;
+                        character.position.y = Math.sin(progress * Math.PI) * 2;
+                    } else {
+                        character.rotation.x = 0;
+                        character.position.y = 0;
+                    }
+                },
+                roll: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const rollCycle = (time % 1.5);
+                    
+                    if (rollCycle < 0.6) {
+                        const progress = rollCycle / 0.6;
+                        character.rotation.x = progress * Math.PI * 2;
+                        character.position.z = progress * 2 - 1;
+                    } else {
+                        character.rotation.x = 0;
+                        character.position.z = 0;
                     }
                 },
                 dance: () => {
-                    const time = clock.getElapsedTime();
-                    character.rotation.y = Math.sin(time * 2) * 0.5;
-                    if (character.userData.leftArm) {
-                        character.userData.leftArm.rotation.z = Math.sin(time * 4) * 0.8;
-                        character.userData.rightArm.rotation.z = Math.sin(time * 4 + Math.PI) * 0.8;
-                        character.userData.body.rotation.z = Math.sin(time * 2) * 0.1;
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    
+                    character.rotation.y += 0.02 * animationSpeed;
+                    
+                    if (ud.leftUpperArm) {
+                        ud.leftUpperArm.rotation.z = Math.sin(time * 3) * 1;
+                        ud.rightUpperArm.rotation.z = Math.sin(time * 3 + Math.PI) * 1;
+                        ud.leftUpperArm.rotation.x = Math.sin(time * 2) * 0.5;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 2 + Math.PI) * 0.5;
+                        
+                        ud.body.rotation.z = Math.sin(time * 2) * 0.15;
+                        ud.body.position.y = 1.2 + Math.abs(Math.sin(time * 4)) * 0.1;
+                        
+                        ud.leftThigh.rotation.x = Math.sin(time * 4) * 0.3;
+                        ud.rightThigh.rotation.x = Math.sin(time * 4 + Math.PI) * 0.3;
                     }
                 },
                 wave: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    
+                    if (ud.rightUpperArm) {
+                        ud.rightUpperArm.rotation.z = -1.2;
+                        ud.rightUpperArm.rotation.x = Math.sin(time * 6) * 0.3;
+                        ud.rightForearm.rotation.z = -0.5 + Math.sin(time * 6) * 0.5;
+                        ud.rightHand.rotation.z = Math.sin(time * 6) * 0.3;
+                    }
+                },
+                clap: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const ud = character.userData;
+                    
+                    if (ud.leftUpperArm) {
+                        const clapPhase = Math.sin(time * 5);
+                        ud.leftUpperArm.rotation.z = 0.5 + clapPhase * 0.3;
+                        ud.rightUpperArm.rotation.z = -0.5 - clapPhase * 0.3;
+                        ud.leftForearm.rotation.x = -0.8;
+                        ud.rightForearm.rotation.x = -0.8;
+                    }
+                },
+                punch: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const punchCycle = (time * 2) % 1;
+                    const ud = character.userData;
+                    
+                    if (ud.rightUpperArm) {
+                        if (punchCycle < 0.3) {
+                            ud.rightUpperArm.rotation.x = -(punchCycle / 0.3) * 1.5;
+                            ud.rightForearm.rotation.x = (punchCycle / 0.3) * 0.8;
+                        } else if (punchCycle < 0.6) {
+                            const leftPunch = (punchCycle - 0.3) / 0.3;
+                            ud.rightUpperArm.rotation.x = -0.2;
+                            ud.leftUpperArm.rotation.x = -leftPunch * 1.5;
+                            ud.leftForearm.rotation.x = leftPunch * 0.8;
+                        } else {
+                            ud.leftUpperArm.rotation.x = -0.2;
+                            ud.rightUpperArm.rotation.x = -0.2;
+                        }
+                        
+                        ud.body.rotation.y = Math.sin(punchCycle * Math.PI * 2) * 0.2;
+                    }
+                },
+                kick: () => {
+                    const time = clock.getElapsedTime() * animationSpeed;
+                    const kickCycle = (time * 1.5) % 1;
+                    const ud = character.userData;
+                    
+                    if (ud.rightThigh && kickCycle < 0.5) {
+                        const kickProgress = kickCycle / 0.5;
+                        ud.rightThigh.rotation.x = Math.sin(kickProgress * Math.PI) * 1.8;
+                        ud.rightShin.rotation.x = Math.sin(kickProgress * Math.PI) * 0.5;
+                        
+                        ud.leftUpperArm.rotation.z = 0.5;
+                        ud.rightUpperArm.rotation.z = -0.5;
+                    } else if (ud.rightThigh) {
+                        ud.rightThigh.rotation.x = 0;
+                        ud.rightShin.rotation.x = 0;
+                    }
+                },
+                block: () => {
                     const time = clock.getElapsedTime();
-                    if (character.userData.rightArm) {
-                        character.userData.rightArm.rotation.z = -0.5 + Math.sin(time * 8) * 0.3;
-                        character.userData.rightArm.rotation.x = Math.sin(time * 8) * 0.2;
+                    const ud = character.userData;
+                    
+                    if (ud.leftUpperArm) {
+                        ud.leftUpperArm.rotation.x = -1.2;
+                        ud.rightUpperArm.rotation.x = -1.2;
+                        ud.leftUpperArm.rotation.z = 0.6;
+                        ud.rightUpperArm.rotation.z = -0.6;
+                        ud.leftForearm.rotation.x = -0.8;
+                        ud.rightForearm.rotation.x = -0.8;
+                        
+                        ud.body.position.y = 1.2 + Math.sin(time * 3) * 0.02;
                     }
                 }
             };
@@ -448,10 +1269,46 @@
             requestAnimationFrame(animate);
 
             if (isPlaying && animations[currentAnimation]) {
+                currentTime += clock.getDelta() * animationSpeed;
+                if (currentTime > animationDuration) {
+                    currentTime = 0;
+                }
+                
                 animations[currentAnimation]();
+                updateTimeline();
+            }
+
+            if (autoRotate && character) {
+                character.rotation.y += 0.005;
             }
 
             renderer.render(scene, camera);
+        }
+
+        function updateTimeline() {
+            const progress = (currentTime / animationDuration) * 100;
+            document.getElementById('timeline-progress').style.width = progress + '%';
+            document.getElementById('time-display').textContent = 
+                currentTime.toFixed(2) + ' / ' + animationDuration.toFixed(2);
+        }
+
+        function resetAnimation() {
+            if (!character || !character.userData) return;
+            
+            const ud = character.userData;
+            character.position.set(0, 0, 0);
+            character.rotation.set(0, 0, 0);
+            
+            if (ud.body) {
+                ud.body.position.y = 1.2;
+                ud.body.rotation.set(0, 0, 0);
+                ud.head.position.y = 1.85;
+                
+                [ud.leftUpperArm, ud.rightUpperArm, ud.leftForearm, ud.rightForearm,
+                 ud.leftThigh, ud.rightThigh, ud.leftShin, ud.rightShin].forEach(part => {
+                    if (part) part.rotation.set(0, 0, 0);
+                });
+            }
         }
 
         function onWindowResize() {
@@ -461,65 +1318,238 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
         }
 
-        function changeColor(color) {
-            if (character && character.userData.body) {
-                character.userData.body.material.color.setStyle(color);
-                character.userData.leftArm.material.color.setStyle(color);
-                character.userData.rightArm.material.color.setStyle(color);
-            }
+        // UI Controls
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('play-btn').textContent = isPlaying ? '⏸' : '▶';
         }
 
-        // Event listeners
-        document.querySelectorAll('.anim-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.anim-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentAnimation = btn.dataset.anim;
-                document.getElementById('current-anim').textContent = btn.textContent.split(' - ')[1];
-                
-                // Reset rotations
-                if (character && character.userData.leftLeg) {
-                    character.position.y = 0;
-                    character.rotation.y = 0;
-                    character.userData.leftLeg.rotation.x = 0;
-                    character.userData.rightLeg.rotation.x = 0;
-                    character.userData.leftArm.rotation.x = 0;
-                    character.userData.rightArm.rotation.x = 0;
-                    character.userData.leftArm.rotation.z = 0;
-                    character.userData.rightArm.rotation.z = 0;
-                    character.userData.body.rotation.z = 0;
+        function resetTimeline() {
+            currentTime = 0;
+            resetAnimation();
+        }
+
+        function toggleGrid() {
+            showGrid = !showGrid;
+            gridHelper.visible = showGrid;
+        }
+
+        function toggleSkeleton() {
+            showSkeleton = !showSkeleton;
+            // Implement skeleton view if needed
+        }
+
+        function toggleLighting() {
+            scene.children.forEach(child => {
+                if (child instanceof THREE.Light && !(child instanceof THREE.AmbientLight)) {
+                    child.visible = !child.visible;
                 }
             });
-        });
+        }
 
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                changeColor(btn.dataset.color);
-            });
-        });
-
-        document.getElementById('play-pause').addEventListener('click', function() {
-            isPlaying = !isPlaying;
-            this.textContent = isPlaying ? '⏸' : '▶';
-        });
-
-        document.getElementById('reset').addEventListener('click', () => {
-            camera.position.set(0, 2, 5);
-            if (character) {
-                character.rotation.y = 0;
-                character.position.y = 0;
-            }
-        });
-
-        document.getElementById('fullscreen').addEventListener('click', () => {
+        function toggleFullscreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
             } else {
                 document.exitFullscreen();
             }
+        }
+
+        function downloadModel() {
+            alert('Скачивание модели с анимацией "' + currentAnimation + '" начато!\n\nВ реальной версии здесь будет экспорт в выбранный формат.');
+        }
+
+        function exportModel(format) {
+            alert('Экспорт в формат ' + format.toUpperCase() + ' начат!\n\nВключено:\n- Модель персонажа\n- Анимация: ' + currentAnimation + '\n- Текстуры: 2048px');
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.character-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                // Change character type
+            });
         });
 
+        document.querySelectorAll('.animation-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.animation-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentAnimation = this.dataset.anim;
+                resetAnimation();
+                currentTime = 0;
+                
+                // Update duration based on animation
+                const badge = this.querySelector('.animation-badge').textContent;
+                animationDuration = parseFloat(badge);
+            });
+        });
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+
+        // Settings Controls
+        document.getElementById('speed-slider').addEventListener('input', function() {
+            animationSpeed = parseFloat(this.value);
+            document.getElementById('speed-value').textContent = animationSpeed.toFixed(1) + 'x';
+        });
+
+        document.getElementById('brightness-slider').addEventListener('input', function() {
+            const brightness = parseFloat(this.value);
+            scene.children.forEach(child => {
+                if (child instanceof THREE.AmbientLight) {
+                    child.intensity = brightness * 0.5;
+                } else if (child instanceof THREE.DirectionalLight) {
+                    child.intensity = brightness * 0.8;
+                }
+            });
+            document.getElementById('brightness-value').textContent = Math.round(brightness * 100) + '%';
+        });
+
+        document.getElementById('scale-slider').addEventListener('input', function() {
+            const scale = parseFloat(this.value);
+            if (character) {
+                character.scale.set(scale, scale, scale);
+            }
+            document.getElementById('scale-value').textContent = Math.round(scale * 100) + '%';
+        });
+
+        document.getElementById('texture-res').addEventListener('input', function() {
+            document.getElementById('texture-res-value').textContent = this.value + 'px';
+        });
+
+        // Color swatches
+        document.querySelectorAll('.color-swatch[data-color]').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                document.querySelectorAll('.color-swatch[data-color]').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                
+                const color = this.dataset.color;
+                if (character && character.userData.body) {
+                    character.userData.body.material.color.setStyle(color);
+                    character.userData.leftUpperArm.material.color.setStyle(color);
+                    character.userData.rightUpperArm.material.color.setStyle(color);
+                    character.userData.leftForearm.material.color.setStyle(color);
+                    character.userData.rightForearm.material.color.setStyle(color);
+                }
+            });
+        });
+
+        document.querySelectorAll('.color-swatch[data-bg]').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                document.querySelectorAll('.color-swatch[data-bg]').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                
+                const bgColor = this.dataset.bg;
+                scene.background = new THREE.Color(bgColor);
+                scene.fog.color = new THREE.Color(bgColor);
+            });
+        });
+
+        // Checkboxes
+        document.getElementById('shadows-check').addEventListener('change', function() {
+            renderer.shadowMap.enabled = this.checked;
+        });
+
+        document.getElementById('wireframe-check').addEventListener('change', function() {
+            if (character) {
+                character.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        child.material.wireframe = this.checked;
+                    }
+                });
+            }
+        });
+
+        document.getElementById('autorotate-check').addEventListener('change', function() {
+            autoRotate = this.checked;
+        });
+
+        // Timeline interaction
+        document.getElementById('timeline-slider').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percentage = x / rect.width;
+            currentTime = percentage * animationDuration;
+        });
+
+        // Character search
+        document.getElementById('character-search').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.character-card').forEach(card => {
+                const name = card.querySelector('.character-name').textContent.toLowerCase();
+                card.style.display = name.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // File upload
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                alert('Загружен файл: ' + file.name + '\n\nВ полной версии здесь будет загрузка и парсинг 3D модели.');
+            }
+        });
+
+        // Initialize
         init();
     </script>
 </body>
-</html>
+</html> class="checkbox" id="shadows-check" checked>
+                        <label for="shadows-check">Тени</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="wireframe-check">
+                        <label for="wireframe-check">Каркас (Wireframe)</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="autorotate-check">
+                        <label for="autorotate-check">Авто-вращение</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Tab -->
+            <div class="tab-content" id="export-tab">
+                <div class="setting-group">
+                    <label class="setting-label">Формат экспорта</label>
+                    <div class="export-options">
+                        <button class="export-btn" onclick="exportModel('fbx')">
+                            <span>FBX (Autodesk)</span>
+                            <span class="format-badge">FBX</span>
+                        </button>
+                        <button class="export-btn" onclick="exportModel('gltf')">
+                            <span>glTF 2.0 (Web)</span>
+                            <span class="format-badge">GLTF</span>
+                        </button>
+                        <button class="export-btn" onclick="exportModel('obj')">
+                            <span>Wavefront OBJ</span>
+                            <span class="format-badge">OBJ</span>
+                        </button>
+                        <button class="export-btn" onclick="exportModel('dae')">
+                            <span>Collada DAE</span>
+                            <span class="format-badge">DAE</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Параметры экспорта</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="export-anim" checked>
+                        <label for="export-anim">Включить анимацию</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox" id="export-skin" checked>
+                        <label for="export-skin">Включить скиннинг</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox"
